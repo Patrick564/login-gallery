@@ -3,13 +3,10 @@ from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
 
 
-SQLALCHEMY_DATABSE_URL = 'a'
+DATABSE_URL = 'postgresql://patrick:123456789@localhost/project1'  # noqa
 
 
-engine = create_engine(
-    SQLALCHEMY_DATABSE_URL, connect_args={'check_same_thread': False}
-)
-
+engine = create_engine(DATABSE_URL)
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 
 Base = declarative_base()

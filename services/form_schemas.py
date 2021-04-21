@@ -8,9 +8,15 @@ class UserData:
         username: str = Form(...),
         email: Optional[str] = Form(None),
         password: str = Form(...),
-        active: Optional[bool] = Form(None),
+        is_active: Optional[bool] = Form(None),
     ):
         self.username = username
         self.email = email
         self.password = password
-        self.active = active
+        self.is_active = is_active
+
+    def update_password(self, hashed_password):
+        self.password = hashed_password
+
+    def to_dict(self):
+        return self.__dict__

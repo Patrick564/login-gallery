@@ -1,23 +1,31 @@
 from fastapi import APIRouter, Depends
 # from fastapi.utils import Optional
 
-from database.schemas import UserCreate, User
+from sqlalchemy.orm import Session
+
+from database.crud_user import create_user
+from database.database import SessionLocal, engine
 from services.form_schemas import UserData
-from services.security import crypt_context
+from database.models import Base
+from database.schemas import UserCreate, User
+
+
+Base.metadata.create_all(bind=engine)
 
 
 router = APIRouter()
 
 
-def create_user(username: str, password: str, active: bool = True):
-    hash_password = crypt_context.hash(password)
-    user = UserCreate(username=username, password=hash_password, active=active)
-
-    return user
+def get_db():
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
 
 
 @router.post('', response_model=User)
-async def register(form_data: UserCreate = Depends(UserData)):
-    user = create_user(form_data.username, form_data.password)
+def register(db: Session = Depends(get_db), form_data: UserCreate = Depends(UserData)):  # noqa
+    user = create_user(db, form_data)
 
     return user
