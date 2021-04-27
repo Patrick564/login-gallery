@@ -1,12 +1,13 @@
-from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import sessionmaker
+from sqlalchemy import create_engine, MetaData
+
+from databases import Database
 
 
-DATABSE_URL = 'postgresql://patrick:123456789@localhost/project1'  # noqa
+DATABASE_URL = 'postgresql://patrick:123456789@localhost/project1'  # noqa
 
 
-engine = create_engine(DATABSE_URL)
-SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+metadata = MetaData()
+database = Database(DATABASE_URL)
+engine = create_engine(DATABASE_URL)
 
-Base = declarative_base()
+metadata.create_all(engine)

@@ -1,16 +1,14 @@
-from sqlalchemy import Column, Integer, String, Boolean
-# from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Integer, String, Boolean, Table
 
-from database.database import Base
+from database.database import metadata
 
 
-class User(Base):
-    __tablename__ = 'users'
-
-    id = Column(Integer, primary_key=True, index=True)
-    username = Column(String, unique=True, index=True)
-    email = Column(String, default='empty')
-    password = Column(String)
-    is_active = Column(Boolean, default=True)
-
-    # attributes = Column(dict)
+users = Table(
+    'users',
+    metadata,
+    Column('id', Integer, primary_key=True),
+    Column('username', String, unique=True),
+    Column('is_active', Boolean, default=True),
+    Column('email', String, default='empty'),
+    Column('password', String)
+)
