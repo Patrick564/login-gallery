@@ -1,6 +1,6 @@
 from sqlalchemy import Column, Integer, String, Boolean, Table
 
-from database.database import metadata
+from db.settings import metadata
 
 
 users = Table(

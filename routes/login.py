@@ -3,28 +3,17 @@ from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
 
 from passlib.context import CryptContext
 
-from database.crud_user import get_user
-from database.database import database
+from db.crud_user import get_user
+# from db.settings import database
 
 
 SECRET_KEY = 'cbc27988afc2b6d3f8dca078e0fb491fba8f9668abcc62e303957b7c9734439b'
 ALGORITHM = 'HS512'
 ACCESS_TOKEN_EXPIRE_MINUTES = 15
 
-
 router = APIRouter()
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/v1/login')
 pwd_context = CryptContext(schemes=['bcrypt'], deprecated='auto')
-
-
-@router.on_event('startup')
-async def startup():
-    await database.connect()
-
-
-@router.on_event('shutdown')
-async def shutdown():
-    await database.disconnect()
 
 
 @router.post('')
