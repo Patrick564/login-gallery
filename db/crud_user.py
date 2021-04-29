@@ -22,19 +22,29 @@ async def get_user(username: str, password: str):
     if not verify_password:
         return 'bad pwd'
 
-    return user
+    return {
+        'username': user['username'],
+        'email': user['email'],
+        'is_active': user['is_active']
+    }
 
 
 async def create_user(user: UserCreate):
-    # hash_password = crypt_context.hash(user.password)
+    hash_password = crypt_context.hash(user.password)
 
-    # user.update_password(hash_password)
+    user.update_password(hash_password)
 
-    # db_user = User(**user.to_dict())
+    query = users.insert().values(**user.to_dict())
+    response = await database.execute(query)
 
-    # db.add(db_user)
-    # db.commit()
-    # db.refresh(db_user)
+    if not response:
+        return {
+            'mal, no creado, mal we': 'no',
+            'successfull': False
+        }
 
-    # return db_user
-    pass
+    return {
+        'id': response,
+        'username': user.username,
+        'successfull': True
+    }

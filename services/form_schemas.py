@@ -8,7 +8,7 @@ class UserData:
         username: str = Form(...),
         email: Optional[str] = Form(None),
         password: str = Form(...),
-        is_active: Optional[bool] = Form(None),
+        is_active: bool = Form(...),
     ):
         self.username = username
         self.email = email
