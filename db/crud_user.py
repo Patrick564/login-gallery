@@ -1,3 +1,5 @@
+from fastapi import HTTPException, status
+
 from sqlalchemy.sql import text
 
 from services.security import crypt_context
@@ -15,6 +17,13 @@ async def get_user(username: str, password: str):
     user = dict(user_query)
 
     verify_password = crypt_context.verify(password, user['password'])
+
+    if not user:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail='Invalid authentication credentials',
+            headers={'WWW-Authenticate': 'Bearer'}
+        )
 
     if not user['is_active']:
         return 'user inactive'
