@@ -1,8 +1,7 @@
 from fastapi import APIRouter, Depends
 
-from services.jwt import verify_jwt_token
-
 from db.schemas import User
+from services.jwt import verify_jwt_token
 
 
 router = APIRouter()

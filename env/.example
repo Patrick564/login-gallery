@@ -1,0 +1,6 @@
+# to get a secret key run: openssl rand -hex 32
+SECRET_KEY="********************************************************"
+
+ALGORITHM="algorith to use example: HS512"
+LOCAL_TIME_ZONE="America/Lima"
+DATABASE_URL="postgresql://user:password@localhost/db_name"

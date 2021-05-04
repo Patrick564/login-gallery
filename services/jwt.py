@@ -1,3 +1,6 @@
+from os import getenv
+from dotenv import load_dotenv
+
 from fastapi import status, HTTPException, Depends
 from fastapi.security import OAuth2PasswordBearer
 
@@ -6,17 +9,12 @@ from jose import jwt, JWTError
 from datetime import datetime, timedelta
 from pytz import timezone
 
-
-SECRET_KEY = 'cbc27988afc2b6d3f8dca078e0fb491fba8f9668abcc62e303957b7c9734439b'
-ALGORITHM = 'HS512'
-ACCESS_TOKEN_EXPIRE = 30
-LOCAL_TIME_ZONE = 'America/Lima'
-
+load_dotenv('.env/.env')
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl='/api/v1/login')
 
 
 def create_jwt_token(username: str, email: str, is_active: bool):
-    tz = timezone(LOCAL_TIME_ZONE)
+    tz = timezone(getenv('LOCAL_TIME_ZONE'))
     credentials_exception = HTTPException(
         status_code=status.HTTP_401_UNAUTHORIZED
     )
@@ -25,11 +23,11 @@ def create_jwt_token(username: str, email: str, is_active: bool):
         'email': email,
         'is_active': is_active,
         'iat': datetime.now(tz=tz),
-        'exp': datetime.now(tz=tz) + timedelta(minutes=ACCESS_TOKEN_EXPIRE)
+        'exp': datetime.now(tz=tz) + timedelta(minutes=30)  # noqa
     }
 
     try:
-        jwt_token = jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+        jwt_token = jwt.encode(payload, getenv('SECRET_KEY'), algorithm=getenv('ALGORITHM'))  # noqa
     except JWTError:
         raise credentials_exception
 
@@ -37,7 +35,6 @@ def create_jwt_token(username: str, email: str, is_active: bool):
 
 
 def verify_jwt_token(token: str = Depends(oauth2_scheme)):
-    a = jwt.decode(token, SECRET_KEY, algorithms=ALGORITHM)
-    print(a)
+    decoded_payload = jwt.decode(token, getenv('SECRET_KEY'), algorithms=getenv('ALGORITHM'))  # noqa
 
-    return a
+    return decoded_payload

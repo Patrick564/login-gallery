@@ -2,11 +2,10 @@ from fastapi import HTTPException, status
 
 from sqlalchemy.sql import text
 
-from services.security import crypt_context
-
 from db.models import users
 from db.schemas import UserCreate
 from db.settings import database
+from services.security import crypt_context
 
 
 async def get_user(username: str, password: str):
@@ -26,10 +25,18 @@ async def get_user(username: str, password: str):
         )
 
     if not user['is_active']:
-        return 'user inactive'
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='User is not active',
+            headers={'WWW-Authenticate': 'Bearer'}
+        )
 
     if not verify_password:
-        return 'bad pwd'
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail='Incorrect password',
+            headers={'WWW-Authenticate': 'Bearer'}
+        )
 
     return {
         'username': user['username'],
@@ -48,7 +55,7 @@ async def create_user(user: UserCreate):
 
     if not response:
         return {
-            'mal, no creado, mal we': 'no',
+            'error': response,
             'successfull': False
         }
 
